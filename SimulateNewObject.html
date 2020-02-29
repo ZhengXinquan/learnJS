@@ -1,0 +1,293 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+    <title>模拟new object(关于arguments、call、apply)</title>
+    <meta charset="utf-8">
+    <meta name="description" content="用面向对象的方式来编写一段命令模式">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+
+</head>
+
+<body>
+    <h1>模拟new object(关于arguments、call、apply)</h1>
+    <pre id="div1">
+            function Person(name) {
+                this.name = name;
+            };
+            Person.prototype.getName = function () {
+                return this.name;
+            };
+        
+            var objectFactory = function () {
+        
+                console.log(arguments);
+                console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                console.log("遍历对象的可枚举属性，包括自有属性、继承自原型的属性")
+                for (p in arguments) { // 遍历对象的可枚举属性，包括自有属性、继承自原型的属性
+                    console.log(p)
+                    console.log(arguments[p])
+                    console.log("--------------")
+                }
+                console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                console.log("Object.keys  对象自有的可枚举属性")
+                console.log(Object.keys(arguments)); //对象自有的可枚举属性,
+                console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                console.log("Object.getOwnPropertyNames  返回对象的自有属性，包括可枚举和不可枚举的")
+                console.log(Object.getOwnPropertyNames(arguments)); //返回对象的自有属性，包括可枚举和不可枚举的
+                console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                console.log("arguments['0']")
+                console.log(arguments["0"])
+                console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                console.log("arguments['1']")
+                console.log(arguments["1"])
+                console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                console.log('arguments["length"]')
+                console.log(arguments["length"])
+                console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                console.log('arguments["callee"]')
+                console.log(arguments["callee"])
+                console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        
+        
+                //    var args = [];
+                //     Array.prototype.push.apply( args, arguments );
+                //     console.log(args);
+        
+                var obj = new Object(); // 从 Object.prototype上克隆一个空的对象
+        
+                //shift  返回数组原来的第一个元素的值。
+                //call() 它的第一个参数用作 this 的对象。其他参数都直接传递给函数自身
+                //原本是对[]进行shift操作，由于call存在，shift的操作对象this指向了 arguments
+                //arguments.shift(), 直接操作报错，因为arguments不是一个真正的数组
+                //[],空数组，只是为了调用shift方法, 可以是任意数组，如[666,777,888]
+                //其实相当于 Constructor = arguments[0]，区别在于，使用shift后，原对象arguments改变了
+                var Constructor = [].shift.call(arguments); // 取得外部传入的构造器，此例是Person
+        
+                obj.__proto__ = Constructor.prototype;
+                // 指向正确的原型
+        
+                //apply() 方法有两个参数，用作 this 的对象和要传递给函数的参数的数组
+                //arguments 是被shift改变后的参数，去除了Person，只剩下参数
+                var ret = Constructor.apply(obj, arguments); // 借用外部传入的构造器给obj设置属 性
+        
+        
+                return typeof ret === 'object' ? ret : obj; // 确保构造器总是会返回一个对象
+            };
+            var a = objectFactory(Person, 'sven');
+        
+            console.log(Object.getPrototypeOf(a) === Person.prototype); // 输出：true
+
+
+    </pre>
+
+
+    <div>1</div>
+    <div>2</div>
+    <div>3</div>
+    <div>4</div>
+    <div>5</div>
+
+</body>
+<script type="text/javascript">
+    function Person(name) {
+        this.name = name;
+    };
+    Person.prototype.getName = function () {
+        return this.name;
+    };
+
+    var objectFactory = function () {
+
+        console.log(arguments);
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        console.log("遍历对象的可枚举属性，包括自有属性、继承自原型的属性")
+        for (p in arguments) { // 遍历对象的可枚举属性，包括自有属性、继承自原型的属性
+            console.log(p)
+            console.log(arguments[p])
+            console.log("--------------")
+        }
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        console.log("Object.keys  对象自有的可枚举属性")
+        console.log(Object.keys(arguments)); //对象自有的可枚举属性,
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        console.log("Object.getOwnPropertyNames  返回对象的自有属性，包括可枚举和不可枚举的")
+        console.log(Object.getOwnPropertyNames(arguments)); //返回对象的自有属性，包括可枚举和不可枚举的
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        console.log("arguments['0']")
+        console.log(arguments["0"])
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        console.log("arguments['1']")
+        console.log(arguments["1"])
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        console.log('arguments["length"]')
+        console.log(arguments["length"])
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        console.log('arguments["callee"]')
+        console.log(arguments["callee"])
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+
+        //    var args = [];
+        //     Array.prototype.push.apply( args, arguments );
+        //     console.log(args);
+
+        var obj = new Object(); // 从 Object.prototype上克隆一个空的对象
+
+        //shift  返回数组原来的第一个元素的值。
+        //call() 它的第一个参数用作 this 的对象。其他参数都直接传递给函数自身
+        //原本是对[]进行shift操作，由于call存在，shift的操作对象this指向了 arguments
+        //arguments.shift(), 直接操作报错，因为arguments不是一个真正的数组
+        //[],空数组，只是为了调用shift方法, 可以是任意数组，如[666,777,888]
+        //其实相当于 Constructor = arguments[0]，区别在于，使用shift后，原对象arguments改变了
+        var Constructor = [].shift.call(arguments); // 取得外部传入的构造器，此例是Person
+
+        obj.__proto__ = Constructor.prototype;
+        // 指向正确的原型
+
+        //apply() 方法有两个参数，用作 this 的对象和要传递给函数的参数的数组
+        //arguments 是被shift改变后的参数，去除了Person，只剩下参数
+        var ret = Constructor.apply(obj, arguments); // 借用外部传入的构造器给obj设置属 性
+
+
+        return typeof ret === 'object' ? ret : obj; // 确保构造器总是会返回一个对象
+    };
+    var a = objectFactory(Person, 'sven');
+
+    console.log(Object.getPrototypeOf(a) === Person.prototype); // 输出：true
+
+
+
+
+    class Animal {
+        constructor(name) {
+            this.name = name;
+        }
+        getName() {
+            return this.name;
+        }
+    }
+    class Dog extends Animal {
+        constructor(name) {
+            super(name);//super关键字用于访问和调用一个对象的父对象上的函数。
+        }
+        speak() {
+            return "woof";
+        }
+    }
+    var dog = new Dog("Scamp");
+    console.log(dog.getName() + ' says ' + dog.speak());
+
+
+    window.name = 'globalName';
+    var myObject = {
+        name: 'sven',
+        getName: function () {
+            console.log(this.name);
+        }
+    };
+    myObject.getName();//sven
+    var getName = myObject.getName;
+    getName();//globalName
+
+    console.log('------------------------------------');
+    window.name1 = 'MyClassGlobalName';
+    var MyClass777 = function () {
+        console.log("MyClass Fun : this.name = " + this.name1);
+
+        console.log(this === window);
+        this.name1 = 'MyClassSven';
+
+    };
+    MyClass777();
+
+    var a = {
+        MyClass777: MyClass777,
+        name1: "6666666"
+    }
+    a.MyClass777();
+
+
+    //构造器的外表跟普通函数一模一样，它们的区别在于被调用的方式
+    function MyClassHello() {
+        this.name2 = 'Hello';
+    };
+    var obj = new MyClassHello();
+    console.log(MyClassHello.name); // 输出：MyClassHello
+    console.log(MyClassHello.name2); // 输出：undefined
+    console.log(obj.name); // 输出：undefined
+    console.log(obj.name2); // 输出：Hello
+
+
+    var obj1 = {
+        objName: 'obj1sven',
+        getName: function () {
+            return this.objName;
+        }
+    };
+    var obj2 = {
+        objName: 'obj2anne'
+    };
+    console.log(obj1.getName()); // 输出:obj1sven
+    console.log(obj1.getName.call(obj2));// 输出：obj2anne
+
+    var lostThis = obj1.getName;
+    console.log(lostThis()); // 输出:undefined
+
+
+    console.log('------------------------------------');
+
+    document.getElementById = (function (func) {
+        return function () {
+            return func.apply(document, arguments);
+        }
+    })(document.getElementById);
+    //以上的 普通写法是
+    // var func=document.getElementById;
+    // document.getElementById = function () {
+    //     return func.apply(document, arguments);
+    // };
+    var getId = document.getElementById;
+    var div = getId('div1');
+    console.log(div.id); // 输出： div1
+
+    console.log('----------------闭包--------------------');
+
+    var nodes = document.getElementsByTagName('div');
+    for (var i = 0, len = nodes.length; i < len; i++) {
+        //nodes[i].onclick = function () {    alert(i);   }
+        eval("nodes[" + i + "].onclick = function () {    alert(" + (i + 1) + ");   }");
+    };
+
+
+
+    var Type = {};
+    for (var i = 0, type; type = ['String','Array', 'Number'][i++];) {
+
+       (function (type) {
+            
+            Type['is' + type] = function (obj) {
+                return Object.prototype.toString.call(obj) ==='[object ' + type + ']';
+            }
+
+        })(type)
+    };
+    Type.isArray([]); // 输出：true
+    Type.isString("str"); // 输出：true
+
+    console.log('------------------------------------');
+
+var report = (function(){
+    var imgs = [];
+    return function( src ){
+        var img = new Image();
+        imgs.push( img );
+        img.src = src+"?"+Math.random();
+    }
+})();
+report( 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2874596575,4117721376&fm=58&w=258&h=258&img.GIF' );
+
+</script>
+
+</html>
