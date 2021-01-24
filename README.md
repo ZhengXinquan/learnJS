@@ -6,7 +6,7 @@
 ### 1.1 js是动态类型语言 & 鸭子类型（只要function/action对）
 
 ```javascript
-//会嘎嘎叫，就可以加入合唱团，不管是什么类型
+//会嘎嘎叫，就可以加入合唱团，不管是什么类型  Mac Test
 var duck = {
     duckSinging: function(){
     console.log( '嘎嘎嘎' );
